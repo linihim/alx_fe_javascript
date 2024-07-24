@@ -97,3 +97,18 @@ function showLastQuote() {
     }
 }
 
+document.addEventListener('DOMContentLoaded', function() {
+    const newQuoteButton = document.getElementById('newQuote');
+    if (newQuoteButton) {
+        newQuoteButton.addEventListener('click', showRandomQuote);
+    }
+
+    const showLastQuoteButton = document.createElement('button');
+    showLastQuoteButton.textContent = 'Show Last Quote';
+    document.body.appendChild(showLastQuoteButton);
+
+    loadQuotes();
+    createAddQuoteForm();
+    showRandomQuote();
+});
+
