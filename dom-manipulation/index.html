@@ -6,9 +6,13 @@
     <title>Dynamic Quote Generator</title>
   </head>
   <body>
-    <h1>Dynamic Quote Generator</h1>
+    <h1>Enhanced Dynamic Quote Generator</h1>
     <div id="quoteDisplay"></div>
-    <button id="newQuote">Show New Quote</button>
+    <button id="newQuote" onclick="showRandomQuote()">Show New Quote</button>
+    <button onclick="showRandomQuote()">Show Last Quote</button>
+    <div id="addQuoteForm"></div>
+    <button onclick="exportToJson()">Export Quote</button>
+    <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
     <script src="script.js"></script>
   </body>
   </html>
