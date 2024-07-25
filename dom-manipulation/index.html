@@ -8,11 +8,11 @@
   <body>
     <h1>Enhanced Dynamic Quote Generator</h1>
     <div id="quoteDisplay"></div>
-    <button id="newQuote" onclick="showRandomQuote()">Show New Quote</button>
-    <button onclick="showRandomQuote()">Show Last Quote</button>
+    <button id="newQuote">Show New Quote</button>
+    <button id="lastQuote">Show Last Quote</button>
     <div id="addQuoteForm"></div>
-    <button onclick="exportToJson()">Export Quote</button>
-    <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
+    <button id="exportQuotes">Export Quote</button>
+    <input type="file" id="importFile" accept=".json">
     <script src="script.js"></script>
   </body>
   </html>
