@@ -1,16 +1,16 @@
-let quotes = [];
-let categories = ['All Categories'];
+const quotes = [];
+const categories = ['All Categories'];
 
 function loadQuotes() {
     const storedQuotes = localStorage.getItem('quotes');
     if (storedQuotes) {
-        quotes = JSON.parse(storedQuotes);
+        quotes.push(...JSON.parse(storedQuotes));
     } else {
-        quotes = [
+        quotes.push(
             {text: "Be the change you wish to see in the world.", category: "Inspirational"},
             {text: "The only way to do great work is to love what you do.", category: "Motivational"},
             {text: "In three words I can sum up everything I've learned about life: it goes on.", category: "Life"}
-        ];
+        );
         saveQuotes();
     }
     populateCategories();
@@ -22,10 +22,10 @@ function saveQuotes() {
 }
 
 function populateCategories() {
-    categories = ['All Categories', ...new Set(quotes.map(quote => quote.category))];
+    const uniqueCategories = ['All Categories', ...new Set(quotes.map(quote => quote.category))];
     const categoryFilter = document.getElementById('categoryFilter');
     categoryFilter.innerHTML = '';
-    categories.forEach(category => {
+    uniqueCategories.forEach(category => {
         const option = document.createElement('option');
         option.value = category;
         option.textContent = category;
@@ -40,12 +40,12 @@ function restoreLastCategory() {
 }
 
 function filterQuotes() {
-    const category = document.getElementById('categoryFilter').value;
-    localStorage.setItem('lastCategory', category);
+    const selectedCategory = document.getElementById('categoryFilter').value;
+    localStorage.setItem('lastCategory', selectedCategory);
 
     let filteredQuotes = quotes;
-    if (category !== 'All Categories') {
-        filteredQuotes = quotes.filter(quote => quote.category === category);
+    if (selectedCategory !== 'All Categories') {
+        filteredQuotes = quotes.filter(quote => quote.category === selectedCategory);
 
     }
 
