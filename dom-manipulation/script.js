@@ -14,6 +14,7 @@ function loadQuotes() {
         saveQuotes();
     }
     populateCategories();
+    restoreLastCategory();
 }
 
 function saveQuotes() {
@@ -23,12 +24,19 @@ function saveQuotes() {
 function populateCategories() {
     categories = ['All Categories', ...new Set(quotes.map(quote => quote.category))];
     const categoryFilter = document.getElementById('categoryFilter');
-    categoryFilter.innerHTML = categories.map(category =>
-        `<option value="${category}">${category}</option>`
-    ).join('');
+    categoryFilter.innerHTML = '';
+    categories.forEach(category => {
+        const option = document.createElement('option');
+        option.value = category;
+        option.textContent = category;
+        categoryFilter.appendChild(option);
+    });
+}
 
+function restoreLastCategory() {
     const lastCategory = localStorage.getItem('lastCategory') || 'All Categories';
-    categoryFilter.value = lastCategory;
+    document.getElementById('categoryFilter').value = lastCategory;
+    filterQuotes();
 }
 
 function filterQuotes() {
@@ -41,23 +49,24 @@ function filterQuotes() {
 
     }
 
-    if (filteredQuotes.length > 0) {
-        const randomIndex = Math.floor(Math.random() *filteredQuotes.length);
-        displayQuote(filteredQuotes[randomIndex]);
-    } else {
-        document.getElementById('quoteDisplay').innerHTML = '<p>No quotes found in this category.</p>';
+    updateDisplayedQuotes(filteredQuotes);
+}
 
+function updateDisplayedQuotes(filteredQuotes) {
+    const quoteDisplay = document.getElementById('quoteDisplay');
+    if (filteredQuotes.length > 0) {
+        const randomIndex = Math.floor(Math.random() * filteredQuotes.length);
+        const quote = filteredQuotes[randomIndex];
+        quoteDisplay.innerHTML = `
+        <p><strong>${quote.text}</strong></p>
+        <p><em>Category: ${quote.category}</em></p>
+        `;
+        sessionStorage.setItem('lastQuote', JSON.stringify(quote)); 
+    } else {
+        quoteDisplay.innerHTML = '<p>No quotes found in this category.</p>';
     }
 }
-
-function displayQuote(quote) {
-    const quoteDisplay = document.getElementById('quoteDisplay');
-    quoteDisplay.innerHTML = `
-    <p><strong>${quote.text}</strong></p>
-    <p><em>Category: ${quote.category}</em></p>
-    `;
-    sessionStorage.setItem('lastQuote', JSON.stringify(quote));
-}
+    
 
 function addQuote() {
     const newQuoteText = document.getElementById('newQuoteText').value;
@@ -85,7 +94,7 @@ function showRandomQuote() {
 function showLastQuote() {
     const lastQuote = JSON.parse(sessionStorage.getItem('lastQuote'));
     if (lastQuote) {
-        displayQuote(lastQuote);
+        updateDisplayedQuotes([lastQuote]);
     } else {
         alert('No last quote found in this sessionStorage.');
     }
