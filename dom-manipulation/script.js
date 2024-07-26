@@ -149,12 +149,10 @@ function createAddQuoteForm() {
 }
 
 
-  
-
 document.addEventListener('DOMContentLoaded', function() {
     loadQuotes();
     createAddQuoteForm();
-    filterQuotes();
+    restoreLastCategory();
 
     const newQuoteButton = document.getElementById('newQuote');
     if (newQuoteButton) {
