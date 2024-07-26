@@ -13,27 +13,27 @@ function loadQuotes() {
         ];
         saveQuotes();
     }
-    updateCategories();
+    populateCategories();
 }
 
 function saveQuotes() {
     localStorage.setItem('quotes', JSON.stringify(quotes));
 }
 
-function updateCategories() {
+function populateCategories() {
     categories = ['All Categories', ...new Set(quotes.map(quote => quote.category))];
     const categoryFilter = document.getElementById('categoryFilter');
     categoryFilter.innerHTML = categories.map(category =>
         `<option value="${category}">${category}</option>`
     ).join('');
 
-    const lastcategory = localStorage.getItem('lastCategory') || 'All Categories';
-    categoryFilter.value = lastcategory;
+    const lastCategory = localStorage.getItem('lastCategory') || 'All Categories';
+    categoryFilter.value = lastCategory;
 }
 
 function filterQuotes() {
     const category = document.getElementById('categoryFilter').value;
-    localStorage.setItem('lastcategory', category);
+    localStorage.setItem('lastCategory', category);
 
     let filteredQuotes = quotes;
     if (category !== 'All Categories') {
@@ -65,12 +65,12 @@ function addQuote() {
 
 
     if (newQuoteText && newQuoteCategory) {
-        quotes.push({text: newQuoteText, category: newQuotecategory});
+        quotes.push({text: newQuoteText, category: newQuoteCategory});
         saveQuotes();
-        updateCategories();
+        populateCategories();
         alert('New quote added successfully!');
         document.getElementById('newQuoteText').value = '';
-        document.getElementById('newQuotecategory').value = '';
+        document.getElementById('newQuoteCategory').value = '';
         filterQuotes();
     } else {
         alert('please enter both the quote and its category.');
@@ -114,7 +114,7 @@ function importFromJsonFile(event) {
                 const importedQuotes = JSON.parse(e.target.result);
                 quotes = quotes.concat(importedQuotes);
                 saveQuotes();
-                updateCategories();
+                populateCategories();
                 alert('Quotes imported successfully!');
                 filterQuotes();
             } catch (error) {
