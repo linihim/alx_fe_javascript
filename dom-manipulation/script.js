@@ -187,12 +187,14 @@ async function postQuoteToServer(quote) {
         }
         const data = await response.json();
         console.log('Quote posted to server:', data);
+        showNotification('Quote posted to server successfully');
     } catch (error) {
         console.error('Error posting quote to server:', error);
     }
 }
 
 async function syncQuotes() {
+    showNotification('Syncing quotes...');
     const serverQuotes = await fetchQuotesFromServer();
     const localQuotes = JSON.parse(localStorage.getItem('quotes')) || [];
 
