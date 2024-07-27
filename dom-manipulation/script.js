@@ -1,6 +1,8 @@
 const quotes = [];
 const categories = ['All Categories'];
 
+const API_URL = 'https://jsonplaceholder.typicode.com/posts'
+
 function loadQuotes() {
     const storedQuotes = localStorage.getItem('quotes');
     if (storedQuotes) {
@@ -148,11 +150,91 @@ function createAddQuoteForm() {
     }
 }
 
+async function fetchQuotesFromServer() {
+    try {
+        const response = await fetch(API_URL);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        return data.map(item => ({
+            text: item.body,
+            category: item.title.split('')[0]
+        }));
+    } catch (error) {
+        console.error('Error fetching quotes from server:', error);
+        return [];
+    }
+}
+
+async function postQuoteToServer(quote) {
+    try {
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            body: JSON.stringify({
+                title: quote.category,
+                body: quote.text,
+                userId: 1,
+            }),
+            headers: {
+                'content-type': 'application/json; charset=UTF-8',
+            },
+        });
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        console.log('Quote posted to server:', data);
+    } catch (error) {
+        console.error('Error posting quote to server:', error);
+    }
+}
+
+async function syncQuotes() {
+    const serverQuotes = await fetchQuotesFromServer();
+    const localQuotes = JSON.parse(localStorage.getItem('quotes')) || [];
+
+
+    const mergedQuotes = [...localQuotes,...serverQuotes];
+    const uniqueQuotes = Array.from(new Set(mergedQuotes.map(JSON.stringify))).map(JSON.parse);
+
+
+    localStorage.setItem('quotes', JSON.stringify(uniqueQuotes));
+    quotes.length = 0;
+    quotes.push(...uniqueQuotes);
+
+    populateCategories();
+    filterQuotes();
+    showNotification('Quotes synced with server');
+}
+
+function showNotification(message) {
+    const notification = document.createElement('div');
+    notification.textContent = message;
+    notification.style.position = 'fixed';
+    notification.style.top = '10px';
+    notification.style.right = '10px';
+    notification.style.padding = '10px';
+    notification.style.backgroundColor = '#4CAF50';
+    notification.style.color = 'white';
+    notification.style.borderRadius = '5px';
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+        document.body.removeChild(notification);
+    }, 3000);
+
+}
+
+function setupPeriodicSync() {
+    setInterval(syncQuotes, 60000);
+}
 
 document.addEventListener('DOMContentLoaded', function() {
     loadQuotes();
     createAddQuoteForm();
     restoreLastCategory();
+    setupPeriodicSync();
 
     const newQuoteButton = document.getElementById('newQuote');
     if (newQuoteButton) {
@@ -179,6 +261,11 @@ document.addEventListener('DOMContentLoaded', function() {
     if (categoryFilter) {
         categoryFilter.addEventListener('change', filterQuotes);
     }
+
+    const syncButton = document.createElement('button');
+    syncButton.textContent = 'Sync Quotes';
+    syncButton.addEventListener('click', syncQuotes);
+    document.body.appendChild(syncButton);
 });
 
 window.onload = function() {
