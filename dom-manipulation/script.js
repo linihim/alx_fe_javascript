@@ -76,9 +76,11 @@ function addQuote() {
 
 
     if (newQuoteText && newQuoteCategory) {
-        quotes.push({text: newQuoteText, category: newQuoteCategory});
+        const newQuote = {text: newQuoteText, category: newQuoteCategory};
+        quotes.push(newQuote);
         saveQuotes();
         populateCategories();
+        postQuoteToServer(newQuote);
         alert('New quote added successfully!');
         document.getElementById('newQuoteText').value = '';
         document.getElementById('newQuoteCategory').value = '';
@@ -159,7 +161,7 @@ async function fetchQuotesFromServer() {
         const data = await response.json();
         return data.map(item => ({
             text: item.body,
-            category: item.title.split('')[0]
+            category: item.title.split(' ')[0]
         }));
     } catch (error) {
         console.error('Error fetching quotes from server:', error);
