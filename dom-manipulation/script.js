@@ -209,7 +209,7 @@ async function syncQuotes() {
 
     populateCategories();
     filterQuotes();
-    showNotification('Quotes synced with server');
+    showNotification('Quotes synced with server!');
 }
 
 function showNotification(message) {
